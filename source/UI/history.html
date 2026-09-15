@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>历史数据记录明细 - 户外温度计</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0a0f14",
+                        "temp-red": "#FF5252",
+                        "hum-cyan": "#00E5FF",
+                        "row-stripe": "#151d26"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "system-ui", "-apple-system", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #283039;
+            border-radius: 10px;
+        }
+        body {
+            min-height: 100dvh;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<header class="sticky top-0 z-50 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md p-4 pb-2 justify-between border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1">sensors</span>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">历史数据记录明细</h2>
+</div>
+<div class="flex items-center gap-4">
+</div>
+</header>
+<div class="flex px-4 py-4 bg-background-light dark:bg-background-dark">
+<div class="flex h-10 flex-1 items-center justify-center rounded-xl bg-slate-200 dark:bg-[#1a242d] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-primary text-slate-500 dark:text-[#9cabba] text-sm font-semibold transition-all">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">list</span>
+                        列表
+                    </span>
+<input checked="" class="invisible w-0" name="view-toggle" type="radio" value="List"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-primary text-slate-500 dark:text-[#9cabba] text-sm font-semibold transition-all">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">leaderboard</span>
+                        图表
+                    </span>
+<input class="invisible w-0" name="view-toggle" type="radio" value="Chart"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-4 min-h-[72px] py-3 justify-between border-b border-slate-100 dark:border-slate-800/50">
+<div class="flex flex-col justify-center">
+<p class="text-slate-600 dark:text-white text-[13px] font-medium font-mono leading-tight mb-1">2023-10-24 14:30:12</p>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+<p class="text-slate-500 dark:text-[#9cabba] text-xs font-normal">车库传感器 (已连接)</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<p class="text-temp-red text-lg font-bold leading-tight">22.5°C</p>
+<p class="text-hum-cyan text-[11px] font-bold leading-tight">45% RH</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-slate-100/50 dark:bg-row-stripe px-4 min-h-[72px] py-3 justify-between border-b border-slate-100 dark:border-slate-800/50">
+<div class="flex flex-col justify-center">
+<p class="text-slate-600 dark:text-white text-[13px] font-medium font-mono leading-tight mb-1">2023-10-24 14:15:05</p>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+<p class="text-slate-500 dark:text-[#9cabba] text-xs font-normal">车库传感器</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<p class="text-temp-red text-lg font-bold leading-tight">22.1°C</p>
+<p class="text-hum-cyan text-[11px] font-bold leading-tight">46% RH</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-4 min-h-[72px] py-3 justify-between border-b border-slate-100 dark:border-slate-800/50">
+<div class="flex flex-col justify-center">
+<p class="text-slate-600 dark:text-white text-[13px] font-medium font-mono leading-tight mb-1">2023-10-24 14:00:00</p>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+<p class="text-slate-500 dark:text-[#9cabba] text-xs font-normal">车库传感器</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<p class="text-temp-red text-lg font-bold leading-tight">21.8°C</p>
+<p class="text-hum-cyan text-[11px] font-bold leading-tight">47% RH</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-slate-100/50 dark:bg-row-stripe px-4 min-h-[72px] py-3 justify-between border-b border-slate-100 dark:border-slate-800/50">
+<div class="flex flex-col justify-center">
+<p class="text-slate-600 dark:text-white text-[13px] font-medium font-mono leading-tight mb-1">2023-10-24 13:45:22</p>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+<p class="text-slate-500 dark:text-[#9cabba] text-xs font-normal">车库传感器</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<p class="text-temp-red text-lg font-bold leading-tight">21.5°C</p>
+<p class="text-hum-cyan text-[11px] font-bold leading-tight">48% RH</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+<div class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800/50">
+<p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">更早记录</p>
+</div>
+<div class="flex items-center gap-4 bg-background-light dark:bg-background-dark px-4 min-h-[72px] py-3 justify-between border-b border-slate-100 dark:border-slate-800/50">
+<div class="flex flex-col justify-center">
+<p class="text-slate-600 dark:text-white text-[13px] font-medium font-mono leading-tight mb-1">2023-10-23 23:55:10</p>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+<p class="text-slate-500 dark:text-[#9cabba] text-xs font-normal">车库传感器</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<p class="text-temp-red text-lg font-bold leading-tight">19.2°C</p>
+<p class="text-hum-cyan text-[11px] font-bold leading-tight">52% RH</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-slate-100/50 dark:bg-row-stripe px-4 min-h-[72px] py-3 justify-between border-b border-slate-100 dark:border-slate-800/50">
+<div class="flex flex-col justify-center">
+<p class="text-slate-600 dark:text-white text-[13px] font-medium font-mono leading-tight mb-1">2023-10-23 23:40:01</p>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+<p class="text-slate-500 dark:text-[#9cabba] text-xs font-normal">车库传感器</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<p class="text-temp-red text-lg font-bold leading-tight">19.5°C</p>
+<p class="text-hum-cyan text-[11px] font-bold leading-tight">51% RH</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700">chevron_right</span>
+</div>
+</div>
+</div>
+
+<p class="text-[10px] text-slate-400 dark:text-slate-600 font-medium">熊猫户外温度计 V2.4</p>
+</div>
+<button class="fixed bottom-24 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-[28px]">sync</span>
+</button>
+<nav class="fixed bottom-0 w-full flex bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 pb-safe pt-2 z-50">
+<div class="flex-1 flex flex-col items-center py-1 opacity-50">
+<span class="material-symbols-outlined">device_thermostat</span>
+<span class="text-[10px] font-medium mt-1">实时</span>
+</div>
+<div class="flex-1 flex flex-col items-center py-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">history</span>
+<span class="text-[10px] font-medium mt-1">历史</span>
+</div>
+<div class="flex-1 flex flex-col items-center py-1 opacity-50">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium mt-1">设置</span>
+</div>
+</nav>
+</div>
+
+
+<!-- AI注意:下拉刷新显示 -->
+<div class="mt-auto p-6 pb-24 flex flex-col items-center justify-center gap-2 opacity-80">
+    <div class="flex items-center gap-2">
+    <span class="material-symbols-outlined text-[16px] text-primary">bluetooth_connected</span>
+    <p class="text-xs text-slate-500 dark:text-[#9cabba]">最后同步：2分钟前</p>
+    </div>
+</body></html>
