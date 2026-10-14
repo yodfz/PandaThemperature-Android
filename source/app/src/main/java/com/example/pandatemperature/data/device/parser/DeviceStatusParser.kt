@@ -15,7 +15,7 @@ import java.nio.ByteOrder
  * - 字节 4: statusFlags (uint8) - 状态标志
  *   - bit 0: isConnected
  *   - bit 1: isTimeSynced
- *   - bit 2: isDataClearInProgress
+ *   - bit 2: isDataClearInProgress（清空或保留维护忙碌）
  *   - bit 3: isWallClockTrusted（固件 1.0.6+0 新增：本次上电收到过对时）
  * - 字节 5: capabilityFlags (uint8) - 能力标志（新固件；旧固件恒为 0）
  *   - bit 0: 支持历史记录间隔配置（interval 语义已变更）
@@ -24,6 +24,8 @@ import java.nio.ByteOrder
  *   - bit 3: 历史记录为周期均值
  *   - bit 4: 支持墙钟边界对齐
  *   - bit 5: 对时后首个窗口可能短于一个周期
+ *   - bit 6: 显式支持含电压历史请求
+ *   - bit 7: 显式支持保留最新历史维护命令
  * - 字节 6-7: firmwareVersion (uint16) - 固件版本号（新固件为 patch 号；旧固件可能没有）
  * - 字节 8-9: sampleInterval (uint16) - 采样间隔（新固件，恒为 1）
  * - 字节 10-11: retentionDays (uint16) - 名义预计保留天数（新固件）

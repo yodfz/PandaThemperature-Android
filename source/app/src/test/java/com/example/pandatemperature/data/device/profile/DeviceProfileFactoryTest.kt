@@ -18,10 +18,11 @@ class DeviceProfileFactoryTest {
 
     /**
      * 隐患回归：新固件（1.0.6+0）在状态帧里上报的是 **patch 号 6**，
-     * 绝不能因此被误判成 14 字节 V3 历史。现场固件历史记录始终是 12 字节 V2。
+     * 绝不能因此被误判成 14 字节 V3 历史。未声明 0x40 能力的固件仍是 12 字节 V2。
      */
     @Test
     fun firmwarePatchNumberSixMustNotSelectFourteenByteHistory() {
+        assertEquals(12, historyRecordSize(firmwareVersion = 8))
         assertEquals(12, historyRecordSize(firmwareVersion = 6))
         assertEquals(12, historyRecordSize(firmwareVersion = 5))
         assertEquals(12, historyRecordSize(firmwareVersion = 1))

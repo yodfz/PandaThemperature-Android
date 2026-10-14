@@ -22,6 +22,31 @@ interface TemperatureRecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(records: List<TemperatureRecord>)
     
+    /** Only matches module history; phone samples with or without GPS remain independent. */
+    @Query("SELECT * FROM temperature_records WHERE deviceId = :deviceId AND timestamp IN (:timestamps) AND isPhoneSample = 0 AND latitude IS NULL AND longitude IS NULL ORDER BY id ASC")
+    suspend fun getHistoryRecordsByTimestamps(deviceId: String, timestamps: List<Long>): List<TemperatureRecord>
+
+    /** Repeated full/incremental downloads update existing module rows instead of adding duplicates. */
+    @Transaction
+    suspend fun upsertHistoryRecords(records: List<TemperatureRecord>) {
+        require(records.all { !it.isPhoneSample && it.latitude == null && it.longitude == null }) {
+            "Module history must not contain phone samples or GPS coordinates"
+        }
+        // Keep the last sample for each device/timestamp within this batch.
+        val uniqueRecords = records.associateBy { it.deviceId to it.timestamp }.values
+        for ((deviceId, deviceRecords) in uniqueRecords.groupBy { it.deviceId }) {
+            // Chunk the IN query to stay below SQLite's bind-parameter limit.
+            for (batch in deviceRecords.chunked(500)) {
+                val existing = getHistoryRecordsByTimestamps(deviceId, batch.map { it.timestamp })
+                    .distinctBy { it.timestamp }
+                    .associateBy { it.timestamp }
+                insertAll(batch.map { record ->
+                    record.copy(id = existing[record.timestamp]?.id ?: 0L)
+                })
+            }
+        }
+    }
+
     /**
      * 查询所有记录（按时间戳倒序，timestamp为0的记录放在最后）
      * 仅查询指定设备的记录
@@ -65,6 +90,10 @@ interface TemperatureRecordDao {
      */
     @Query("SELECT COUNT(*) FROM temperature_records WHERE deviceId = :deviceId")
     suspend fun getRecordCount(deviceId: String): Int
+
+    /** Count only module history when comparing with the device history total. */
+    @Query("SELECT COUNT(*) FROM temperature_records WHERE deviceId = :deviceId AND isPhoneSample = 0 AND latitude IS NULL AND longitude IS NULL")
+    suspend fun getHistoryRecordCount(deviceId: String): Int
     
     /**
      * 查询最新的N条记录（按时间戳倒序）
@@ -81,7 +110,7 @@ interface TemperatureRecordDao {
     /**
      * 获取最新的一条「无 GPS」记录（设备同步下来的；排除手机定时写入的带 GPS 记录，用于请求设备历史时的起始时间戳）
      */
-    @Query("SELECT * FROM temperature_records WHERE deviceId = :deviceId AND timestamp > 0 AND latitude IS NULL AND longitude IS NULL ORDER BY timestamp DESC LIMIT 1")
+    @Query("SELECT * FROM temperature_records WHERE deviceId = :deviceId AND timestamp > 0 AND isPhoneSample = 0 AND latitude IS NULL AND longitude IS NULL ORDER BY timestamp DESC LIMIT 1")
     suspend fun getLatestRecordWithoutGps(deviceId: String): TemperatureRecord?
     
     /**

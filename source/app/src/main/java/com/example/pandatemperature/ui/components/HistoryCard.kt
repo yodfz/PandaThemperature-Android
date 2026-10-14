@@ -456,7 +456,7 @@ fun HistoryTableRow(
                 color = HumidityColor
             )
             Text(
-                text = record.batteryVoltage?.let { "${String.format("%.1f", it)} V" } ?: "-- V",
+                text = record.batteryVoltage?.let { "${String.format("%.3f", it)} V" } ?: "-- V",
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -620,7 +620,7 @@ fun HistoryItem(
                     color = HumCyan
                 )
                 Text(
-                    text = record.batteryVoltage?.let { "${String.format("%.1f", it)} V" } ?: "-- V",
+                    text = record.batteryVoltage?.let { "${String.format("%.3f", it)} V" } ?: "-- V",
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

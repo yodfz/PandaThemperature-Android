@@ -44,6 +44,10 @@ interface ThermometerProfile : DeviceProfile<ThermometerData, TemperatureRecord>
      */
     val useAsyncNotificationForHistory: Boolean
     
+    /** Legacy history request remains uint32 little-endian seconds. */
+    fun buildHistoryRequest(timestamp: Long): ByteArray = java.nio.ByteBuffer.allocate(4)
+        .order(java.nio.ByteOrder.LITTLE_ENDIAN).putInt(timestamp.toInt()).array()
+
     /**
      * 获取最高最低温度解析器
      */

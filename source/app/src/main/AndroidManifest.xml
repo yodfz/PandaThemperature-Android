@@ -25,6 +25,7 @@
     <!-- 工具箱：营地助手麦克风（风向检测）、营地回溯相机 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"

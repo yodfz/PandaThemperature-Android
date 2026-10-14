@@ -8,20 +8,33 @@ plugins {
 }
 
 /**
- * Release 签名材料从仓库根目录的 keystore.properties 读取。
+ * Release 签名优先从 PANDA_RELEASE_KEYSTORE_PROPERTIES 指定的外置文件读取，
+ * 未设置时兼容仓库根目录的 keystore.properties。
  * 该文件已被 .gitignore 排除，签名文件与口令都不入库、不进源码压缩包。
  *
  * 未提供 keystore.properties 时，release 变体退回 Android 默认调试密钥签名，
  * 使 assembleRelease 仍能产出可直接安装的 APK（仅用于本地联调，
  * 不可用于分发；一旦补齐正式签名，产物签名会随之改变）。
  */
-val keystorePropertiesFile = rootProject.file("keystore.properties")
+val externalSigningProperties = providers.environmentVariable("PANDA_RELEASE_KEYSTORE_PROPERTIES")
+    .orNull?.trim()?.takeIf { it.isNotEmpty() }
+val keystorePropertiesFile = rootProject.file(externalSigningProperties ?: "keystore.properties")
+if (externalSigningProperties != null) {
+    require(keystorePropertiesFile.isFile) { "External Release signing properties file is missing" }
+}
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) {
         keystorePropertiesFile.inputStream().use { load(it) }
     }
 }
 val hasReleaseSigning = keystorePropertiesFile.exists()
+if (hasReleaseSigning) {
+    listOf("storeFile", "storePassword", "keyAlias", "keyPassword").forEach { property ->
+        require(!keystoreProperties.getProperty(property).isNullOrBlank()) {
+            "Release signing properties missing required field: $property"
+        }
+    }
+}
 
 /**
  * OTA 授权密钥从仓库根目录的 ota.properties 读取，再经 BuildConfig 注入代码。
@@ -48,8 +61,8 @@ android {
         applicationId = "com.example.pandatemperature"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 6
+        versionName = "1.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -61,7 +74,12 @@ android {
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {
-                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                val configuredStoreFile = keystoreProperties.getProperty("storeFile")
+                // External properties resolve relative stores beside the properties file;
+                // the legacy local configuration keeps its existing path behavior.
+                storeFile = if (externalSigningProperties != null) {
+                    keystorePropertiesFile.parentFile.resolve(configuredStoreFile)
+                } else file(configuredStoreFile)
                 storePassword = keystoreProperties.getProperty("storePassword")
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")

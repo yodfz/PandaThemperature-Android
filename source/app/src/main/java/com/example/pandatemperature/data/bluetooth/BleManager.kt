@@ -103,6 +103,7 @@ class BleManager private constructor(private val context: Context) {
     // GATT 回调
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            if (!GattCallbackIdentity.isCurrent(gatt, this@BleManager.gatt)) return
             when (newState) {
                 BluetoothProfile.STATE_CONNECTED -> {
                     Log.d(TAG, "设备已连接")
@@ -119,6 +120,7 @@ class BleManager private constructor(private val context: Context) {
         }
         
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            if (!GattCallbackIdentity.isCurrent(gatt, this@BleManager.gatt)) return
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.d(TAG, "服务发现成功")
                 _connectionState.value = ConnectionState.ServicesDiscovered
@@ -133,6 +135,7 @@ class BleManager private constructor(private val context: Context) {
             characteristic: BluetoothGattCharacteristic,
             status: Int
         ) {
+            if (!GattCallbackIdentity.isCurrent(gatt, this@BleManager.gatt)) return
             val callback = readCallbacks.remove(characteristic.uuid)
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 val value = characteristic.value
@@ -149,6 +152,7 @@ class BleManager private constructor(private val context: Context) {
             characteristic: BluetoothGattCharacteristic,
             status: Int
         ) {
+            if (!GattCallbackIdentity.isCurrent(gatt, this@BleManager.gatt)) return
             val callback = writeCallbacks.remove(characteristic.uuid)
             val success = status == BluetoothGatt.GATT_SUCCESS
             if (success) {
@@ -163,12 +167,14 @@ class BleManager private constructor(private val context: Context) {
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
         ) {
+            if (!GattCallbackIdentity.isCurrent(gatt, this@BleManager.gatt)) return
             val value = characteristic.value
             Log.d(TAG, "特征值变化: ${characteristic.uuid}, 数据长度: ${value?.size ?: 0}")
             notificationCallbacks[characteristic.uuid]?.invoke(value ?: ByteArray(0))
         }
         
         override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
+            if (!GattCallbackIdentity.isCurrent(gatt, this@BleManager.gatt)) return
             // 修复：此前 requestMtu 只保存了回调，却没有任何 GATT 回调触发它，
             // 导致 MTU 请求永远等不到结果。BLE OTA 的 START 报文（61B）依赖协商 MTU。
             val success = status == BluetoothGatt.GATT_SUCCESS
@@ -183,6 +189,7 @@ class BleManager private constructor(private val context: Context) {
             descriptor: BluetoothGattDescriptor,
             status: Int
         ) {
+            if (!GattCallbackIdentity.isCurrent(gatt, this@BleManager.gatt)) return
             val success = status == BluetoothGatt.GATT_SUCCESS
             if (success) {
                 Log.d(TAG, "描述符写入成功: ${descriptor.uuid}")

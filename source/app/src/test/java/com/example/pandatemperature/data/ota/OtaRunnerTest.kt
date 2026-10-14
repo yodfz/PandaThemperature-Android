@@ -401,4 +401,26 @@ class OtaRunnerTest {
 
         assertFalse(runner(device).triggerUpgrade())
     }
+    @Test
+    fun separateTriggerSessionUsesExistingVerifiedImageWithoutAnotherStart() = runBlocking {
+        val device = FakeDevice()
+        val bytes = signedImage(1000)
+        assertTrue(runner(device).run(OtaImageParser.parse(bytes), bytes) is OtaResult.ReadyToInstall)
+        val starts = device.startCount
+        val triggerSession = runner(device)
+        assertTrue(triggerSession.prepareTrigger())
+        assertTrue(triggerSession.triggerUpgrade())
+        assertEquals(starts, device.startCount)
+        assertEquals(OtaState.PENDING, device.state)
+    }
+
+    @Test
+    fun separateTriggerSessionRejectsDeviceWithoutVerifiedImage() = runBlocking {
+        val device = FakeDevice()
+        val session = runner(device)
+        assertTrue(session.prepareTrigger())
+        assertFalse(session.triggerUpgrade())
+        assertEquals(0, device.startCount)
+        assertEquals(OtaError.STATE, device.lastError)
+    }
 }

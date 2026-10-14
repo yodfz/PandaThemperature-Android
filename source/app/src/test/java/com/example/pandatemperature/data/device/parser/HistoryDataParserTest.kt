@@ -86,4 +86,14 @@ class HistoryDataParserTest {
             HistoryDataParser.VOLTAGE_OFFSET_IN_V3 + HistoryDataParser.VOLTAGE_SIZE
         )
     }
+    @Test
+    fun v3UnknownVoltageSentinelStaysNullForLegacyStoredHistory() {
+        val packet = ByteBuffer.allocate(14).order(ByteOrder.LITTLE_ENDIAN)
+            .putInt(1_700_000_000).putShort(2534.toShort()).putShort(4567.toShort())
+            .putInt(101325).putShort(0xFFFF.toShort()).array()
+        val record = HistoryDataParser("test-device", HistoryRecordFormat.V3).parse(packet)!!.single()
+        assertNull(record.batteryVoltage)
+        assertEquals(1_700_000_000L, record.timestamp)
+        assertEquals(1013.25f, record.pressure!!, 0.001f)
+    }
 }

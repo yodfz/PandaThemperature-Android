@@ -41,7 +41,7 @@ data class DeviceStatus(
     val firmwareVersion: Int = 0,
 
     /**
-     * 是否正在清空数据（状态位 bit2）
+     * 是否正在清空数据或执行历史保留维护（状态位 bit2）
      */
     val isDataClearInProgress: Boolean = false,
 
@@ -61,6 +61,8 @@ data class DeviceStatus(
      *   bit3 历史记录为周期均值
      *   bit4 支持墙钟边界对齐（新增）
      *   bit5 对时后首个窗口可能短于一个周期（新增）
+     *   bit6 支持显式请求14字节含电压历史（0x40）
+     *   bit7 支持显式保留最新历史命令（0x80）
      */
     val capabilityFlags: Int = 0,
 
@@ -74,6 +76,14 @@ data class DeviceStatus(
      */
     val retentionDays: Int? = null
 ) {
+    companion object {
+        const val HISTORY_VOLTAGE_CAPABILITY = 0x40
+        const val HISTORY_RETENTION_CAPABILITY = 0x80
+    }
+
+    val supportsHistoryRetention: Boolean get() = (capabilityFlags and HISTORY_RETENTION_CAPABILITY) != 0
+
+    val supportsHistoryVoltage: Boolean get() = (capabilityFlags and HISTORY_VOLTAGE_CAPABILITY) != 0
     /** 固件是否已采用"采样 / 历史记录"双周期语义（能力位 bit0） */
     val supportsHistoryInterval: Boolean get() = (capabilityFlags and 0x01) != 0
 

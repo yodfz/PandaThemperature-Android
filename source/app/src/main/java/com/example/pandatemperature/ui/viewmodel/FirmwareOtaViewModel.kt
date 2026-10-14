@@ -97,9 +97,9 @@ class FirmwareOtaViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun onAuthKeyChanged(text: String) {
+    fun onAuthKeyChanged(text: String, persist: Boolean = true) {
         _state.value = _state.value.copy(authKeyText = text)
-        prefs.edit().putString(KEY_AUTH, text).apply()
+        if (persist) prefs.edit().putString(KEY_AUTH, text).apply()
     }
 
     /** 开始上传（START → Data → END）。 */

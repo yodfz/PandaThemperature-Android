@@ -254,7 +254,7 @@ private fun DeviceListItem(
                     )
                 }
                 Text(
-                    text = "电池电压: ${device.latestBatteryVoltage?.let { String.format("%.1fV", it) } ?: "--"}",
+                    text = "电池电压: ${device.latestBatteryVoltage?.let { String.format("%.3fV", it) } ?: "--"}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )

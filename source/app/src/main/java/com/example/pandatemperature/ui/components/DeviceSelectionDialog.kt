@@ -18,6 +18,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.example.pandatemperature.utils.safeBluetoothDeviceName
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -384,7 +386,7 @@ private fun ScanningDeviceItem(
             Spacer(modifier = Modifier.width(12.dp)) // 减少间距
             Column {
                 Text(
-                    text = device.name ?: "未知设备",
+                    text = safeBluetoothDeviceName(LocalContext.current, device) ?: "未知设备",
                     style = MaterialTheme.typography.bodyMedium, // 减小字体
                     fontWeight = FontWeight.Medium
                 )

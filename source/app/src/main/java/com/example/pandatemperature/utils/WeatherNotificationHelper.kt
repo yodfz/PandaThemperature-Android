@@ -1,5 +1,8 @@
 package com.example.pandatemperature.utils
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -22,7 +25,9 @@ const val NOTIFICATION_ID_STORM = 3001
  * 点击进入 MainActivity
  */
 fun showStormWarningNotification(context: Context, message: String) {
-    val appName = context.getString(R.string.app_name)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
+    if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return
     createWeatherAlertChannel(context)
 
     val intent = Intent(context, MainActivity::class.java).apply {
@@ -48,12 +53,11 @@ fun showStormWarningNotification(context: Context, message: String) {
         .setVibrate(longArrayOf(0, 500, 200, 500))
         .build()
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (NotificationManagerCompat.from(context).canUseFullScreenIntent()) {
-            // 已授权通知时直接显示
-        }
+    try {
+        NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_STORM, notification)
+    } catch (_: SecurityException) {
+        // Notification permission can be revoked after the check; do not crash the sampling loop.
     }
-    NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_STORM, notification)
 }
 
 /**

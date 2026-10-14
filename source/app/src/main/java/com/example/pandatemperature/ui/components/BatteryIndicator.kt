@@ -56,7 +56,7 @@ fun BatteryIndicator(
         // 电压显示（电池右侧）
         if (batteryVoltage != null) {
             Text(
-                text = String.format("%.2fV", batteryVoltage),
+                text = String.format("%.3fV", batteryVoltage),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant

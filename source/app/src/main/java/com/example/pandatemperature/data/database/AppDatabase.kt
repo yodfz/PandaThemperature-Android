@@ -16,7 +16,7 @@ import com.example.pandatemperature.data.model.TemperatureRecord
  */
 @Database(
     entities = [TemperatureRecord::class, Device::class],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -84,6 +84,14 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
         
+        /** Explicit source marker; legacy location-free rows are intentionally unknown. */
+        internal val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE temperature_records ADD COLUMN isPhoneSample INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("UPDATE temperature_records SET isPhoneSample = 1 WHERE latitude IS NOT NULL OR longitude IS NOT NULL")
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -96,10 +104,11 @@ abstract class AppDatabase : RoomDatabase() {
                         MIGRATION_6_7,
                         MIGRATION_7_8,
                         MIGRATION_8_9,
-                        MIGRATION_9_10
+                        MIGRATION_9_10,
+                        MIGRATION_10_11
                     )
                     // 继续兼容没有显式迁移路径的早期开发版本；v5 及以上会优先
-                    // 使用上面的完整迁移链，因此正常升级到 v10 不会清空历史数据。
+                    // 使用上面的完整迁移链，因此正常升级到 v11 不会清空历史数据。
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance

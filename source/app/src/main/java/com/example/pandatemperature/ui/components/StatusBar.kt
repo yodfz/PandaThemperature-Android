@@ -169,7 +169,7 @@ fun StatusBar(
                         // 固件不上报电压字段时显示占位符（实测本机型实时帧仅 6 字节，无电压）。
                         if (isConnected) {
                             Text(
-                                text = batteryVoltage?.let { String.format("%.1fV", it) } ?: "-- V",
+                                text = batteryVoltage?.let { String.format("%.3fV", it) } ?: "-- V",
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Normal,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),

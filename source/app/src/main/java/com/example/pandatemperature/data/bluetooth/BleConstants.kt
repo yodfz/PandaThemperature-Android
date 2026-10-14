@@ -34,9 +34,9 @@ object BleConstants {
     const val INTERVAL_CHAR = "12340021-1234-5678-1234-56789abcdef0"
 
     /** 设备历史记录上限（条），与固件 W25Q64_MAX_RECORDS 保持一致；用于估算可保留时长 */
-    const val HISTORY_MAX_RECORDS = 65000
+    const val HISTORY_MAX_RECORDS = 64848
 
-    /** 历史记录间隔下限（秒）。这是固件的容量红线：65000×60s = 45.1 天，低于它无法兑现 30 天保留承诺 */
+    /** 历史记录间隔下限（秒）。遵循固件允许范围；估算天数不等于续航或数据保留保证 */
     const val HISTORY_INTERVAL_MIN = 60
 
     /** 历史记录间隔上限（秒），与固件 MAX_HISTORY_INTERVAL 一致（1 小时） */

@@ -199,6 +199,10 @@ class OtaRunner(
      * 就被拉断，Android 会以 `status=133 (GATT_ERROR)` 上报这次写失败 —— 这是"触发成功"的
      * 伴随现象，不是失败。因此写失败后要再等一小会儿看链路是否断开：断开 ⇒ 已触发。
      */
+    /** Reattach the existing status path for an explicitly authorized trigger-only session. */
+    suspend fun prepareTrigger(): Boolean = transport.isConnected() &&
+        transport.subscribeStatus { status -> statusChannel.trySend(status) }
+
     suspend fun triggerUpgrade(): Boolean {
         // 链路本来就已经断了：不能把"写了但没连通"当成已触发
         if (!transport.isConnected()) return false

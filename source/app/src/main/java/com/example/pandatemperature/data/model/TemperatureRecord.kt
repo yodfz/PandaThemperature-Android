@@ -1,5 +1,6 @@
 package com.example.pandatemperature.data.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -63,5 +64,9 @@ data class TemperatureRecord(
      * GPS经度（可选）
      * null 表示未记录位置或无定位权限
      */
-    val longitude: Double? = null
+    val longitude: Double? = null,
+
+    /** Phone realtime sample, including samples without GPS. Legacy unknown rows remain false. */
+    @ColumnInfo(defaultValue = "0")
+    val isPhoneSample: Boolean = false
 ) : HistoryRecord
